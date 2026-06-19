@@ -1,0 +1,49 @@
+/*
+ * Reference recipe classes — illustrative, optional.
+ * Components map these tokens through their own inline styles; these primitives
+ * show the intended recipe so specimen cards and quick mocks can lean on them.
+ */
+
+.ss-card {
+  background: var(--ss-raised);
+  border: var(--ss-border-hairline) solid var(--ss-border);
+  border-radius: var(--ss-radius-md);
+  box-shadow: var(--ss-shadow-md);
+  color: var(--ss-text);
+  padding: var(--ss-space-5);
+}
+
+.ss-label {
+  font-family: var(--ss-font-sans);
+  font-size: var(--ss-fs-label);
+  font-weight: var(--ss-fw-semibold);
+  letter-spacing: var(--ss-ls-label);
+  text-transform: uppercase;
+  color: var(--ss-dim);
+}
+
+.ss-voice {
+  font-family: var(--ss-font-serif);
+  font-style: italic;
+  font-size: var(--ss-fs-voice);
+  line-height: var(--ss-lh-relaxed);
+  color: var(--ss-text);
+}
+
+.ss-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ss-space-1);
+  background: var(--ss-surface);
+  border: var(--ss-border-hairline) solid var(--ss-border);
+  border-radius: var(--ss-radius-pill);
+  padding: 2px 10px;
+  font-family: var(--ss-font-sans);
+  font-size: var(--ss-fs-caption);
+  color: var(--ss-dim);
+}
+
+.ss-focusable:focus-visible {
+  outline: none;
+  box-shadow: var(--ss-focus-ring);
+}

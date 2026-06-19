@@ -1,0 +1,52 @@
+/*
+ * Webfonts for the Living Chronicle.
+ *
+ * UI sans = Inter, mono = JetBrains Mono — both loaded from Google Fonts.
+ * In-world SERIF voice = Iowan Old Style (Bitstream), self-hosted below, with
+ * Palatino → Georgia → serif as the fallback stack. See typography.css.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+/* ---- Iowan Old Style — the in-world serif voice ---- */
+@font-face {
+  font-family: 'Iowan Old Style';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/iowan-old-style.ttf") format("truetype");
+}
+@font-face {
+  font-family: 'Iowan Old Style';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/iowan-old-style-italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: 'Iowan Old Style';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/iowan-old-style-bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: 'Iowan Old Style';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/iowan-old-style-bold-italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: 'Iowan Old Style';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("../assets/fonts/iowan-old-style-black.ttf") format("truetype");
+}
+@font-face {
+  font-family: 'Iowan Old Style';
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: url("../assets/fonts/iowan-old-style-black-italic.ttf") format("truetype");
+}

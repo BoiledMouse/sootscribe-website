@@ -1,0 +1,97 @@
+/*
+ * Colour — one warm-neutral surface ramp expressed as two sibling themes.
+ *
+ * Consume the ROLE tokens (--ss-canvas, --ss-text, --ss-accent, …) in
+ * components; the raw ramp/accent values are exposed for the rare one-off.
+ * Ink (dark) is the default; [data-theme="vellum"] flips the whole subtree.
+ */
+
+:root {
+  /* ---- Raw palette: warm ember primary ---- */
+  --ss-ember: #f08a3c;
+  --ss-ember-hover: #f49a52;
+  --ss-ember-active: #d9742b;
+  --ss-ember-on-light: #a8531a;
+
+  /* ---- Raw palette: cool slate secondary ---- */
+  --ss-slate: #6fa8c7;
+  --ss-slate-hover: #85b8d3;
+  --ss-slate-active: #5891b0;
+  --ss-slate-on-light: #2c6e8f;
+}
+
+/* ============================================================
+ * Ink — dark theme (default). Applies at :root and explicitly.
+ * ============================================================ */
+:root,
+[data-theme='ink'] {
+  /* Surface ramp — the desk and the sheets lit on it */
+  --ss-canvas: #15130e;
+  --ss-surface: #1c1a13;
+  --ss-raised: #252116;
+  --ss-overlay: #2f2a1d;
+  --ss-border: #3a3427;
+  --ss-border-strong: #4a4434;
+  --ss-text: #f2ecdf;
+  --ss-dim: #9c9484;
+
+  /* Accents */
+  --ss-accent: var(--ss-ember);
+  --ss-accent-text: var(--ss-ember);
+  --ss-accent-wash: #3a2716;
+  --ss-link: var(--ss-slate);
+
+  /* Status */
+  --ss-danger: #e5544b;
+  --ss-warn: #e0a22e;
+  --ss-good: #5ba86b;
+  --ss-info: #6fa8c7;
+
+  /* Warm, layered shadows — move together with the surface ramp */
+  --ss-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ss-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --ss-shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.55);
+
+  /* Translucent status fills */
+  --ss-danger-wash: rgba(229, 84, 75, 0.14);
+  --ss-warn-wash: rgba(224, 162, 46, 0.14);
+  --ss-good-wash: rgba(91, 168, 107, 0.14);
+  --ss-info-wash: rgba(111, 168, 199, 0.14);
+
+  --ss-focus-ring: 0 0 0 var(--ss-border-focus) rgba(240, 138, 60, 0.55);
+}
+
+/* ============================================================
+ * Vellum — light parchment theme (sibling). Same roles, light values.
+ * ============================================================ */
+[data-theme='vellum'] {
+  --ss-canvas: #f3eee1;
+  --ss-surface: #fbf8f0;
+  --ss-raised: #ffffff;
+  --ss-overlay: #ffffff;
+  --ss-border: #e7e1d2;
+  --ss-border-strong: #d7cfbc;
+  --ss-text: #221e16;
+  --ss-dim: #6b6454;
+
+  --ss-accent: var(--ss-ember);
+  --ss-accent-text: var(--ss-ember-on-light);
+  --ss-accent-wash: #fbead9;
+  --ss-link: var(--ss-slate-on-light);
+
+  --ss-danger: #c23934;
+  --ss-warn: #9a6b12;
+  --ss-good: #2f7d46;
+  --ss-info: #2c6e8f;
+
+  --ss-shadow-sm: 0 1px 2px rgba(60, 48, 28, 0.08);
+  --ss-shadow-md: 0 3px 10px rgba(60, 48, 28, 0.1);
+  --ss-shadow-lg: 0 10px 30px rgba(60, 48, 28, 0.14);
+
+  --ss-danger-wash: rgba(194, 57, 52, 0.1);
+  --ss-warn-wash: rgba(154, 107, 18, 0.1);
+  --ss-good-wash: rgba(47, 125, 70, 0.1);
+  --ss-info-wash: rgba(44, 110, 143, 0.1);
+
+  --ss-focus-ring: 0 0 0 var(--ss-border-focus) rgba(168, 83, 26, 0.5);
+}
