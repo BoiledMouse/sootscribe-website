@@ -1,0 +1,37 @@
+/*
+ * Spacing, radius, borders, motion.
+ *
+ * Spacing is an 8-pt scale with a 4px half-step. Don't invent in-between values.
+ * Card padding = space-5 (20). Stack gaps = space-2/space-3. Section rhythm = space-4.
+ */
+
+:root {
+  /* ---- Spacing (8-pt + 4px half-step) ---- */
+  --ss-space-0: 0;
+  --ss-space-1: 4px;
+  --ss-space-2: 8px;
+  --ss-space-3: 12px;
+  --ss-space-4: 16px;
+  --ss-space-5: 20px;
+  --ss-space-6: 24px;
+  --ss-space-8: 32px;
+  --ss-space-10: 40px;
+  --ss-space-12: 48px;
+  --ss-space-16: 64px;
+
+  /* ---- Radius ---- */
+  --ss-radius-sm: 8px;    /* controls, chips, inputs */
+  --ss-radius-md: 12px;   /* cards, popovers */
+  --ss-radius-lg: 16px;   /* sheets, modals */
+  --ss-radius-pill: 999px;/* pills, avatars */
+
+  /* ---- Borders ---- */
+  --ss-border-hairline: 1px;
+  --ss-border-rail: 3px;   /* ember left rail on highlighted blocks */
+  --ss-border-focus: 2px;
+
+  /* ---- Motion ---- */
+  --ss-motion-fast: 120ms;   /* @kind other */
+  --ss-motion-normal: 200ms; /* @kind other */
+  --ss-ease: cubic-bezier(0.2, 0, 0.2, 1); /* @kind other */
+}

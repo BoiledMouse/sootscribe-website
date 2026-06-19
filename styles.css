@@ -1,0 +1,13 @@
+/*
+ * SootScribe — "Living Chronicle" design system.
+ * Single global entry point. Consumers link THIS file only.
+ * Everything below is @import lines; no rules live here.
+ *
+ * Theme: Ink (dark) is the default at :root. Add data-theme="vellum"
+ * to any ancestor (usually <html>) to flip the subtree to light parchment.
+ */
+@import url("tokens/fonts.css");
+@import url("tokens/colors.css");
+@import url("tokens/typography.css");
+@import url("tokens/spacing.css");
+@import url("tokens/recipes.css");

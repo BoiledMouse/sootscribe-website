@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="ink">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SootScribe — a living world that writes itself</title>
+<meta name="description" content="SootScribe is a deterministic living-world simulator for tabletop game masters. Author settlements, factions and people, advance time a day at a time, and read the believable story the world tells." />
+<link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--ss-canvas);
+    color: var(--ss-text);
+    font-family: var(--ss-font-sans);
+    font-size: var(--ss-fs-body);
+    line-height: var(--ss-lh-normal);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--ss-accent-wash); color: var(--ss-text); }
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-thumb { background: var(--ss-border-strong); border-radius: 99px; border: 3px solid var(--ss-canvas); }
+
+  .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* Suppress transitions during a theme switch (prevents flip-flash) */
+  .no-transition, .no-transition *, .no-transition *::before, .no-transition *::after { transition: none !important; }
+
+  /* ---- shared atoms ---- */
+  .kicker {
+    font-size: var(--ss-fs-label); font-weight: 600; letter-spacing: var(--ss-ls-label);
+    text-transform: uppercase; color: var(--ss-dim);
+  }
+  .serif { font-family: var(--ss-font-serif); }
+  .ember { color: var(--ss-accent-text); }
+  .voice { font-family: var(--ss-font-serif); font-style: italic; line-height: var(--ss-lh-relaxed); }
+  .icon { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    font-family: var(--ss-font-sans); font-size: 14px; font-weight: 600;
+    padding: 11px 18px; border-radius: var(--ss-radius-sm);
+    border: 1px solid transparent; transition: transform var(--ss-motion-fast) var(--ss-ease);
+  }
+  .btn:focus-visible { outline: none; box-shadow: var(--ss-focus-ring); }
+  .btn-filled { background: var(--ss-accent); color: #1a1206; }
+  .btn-filled:hover { background: var(--ss-accent-text); }
+  .btn-filled:active { background: var(--ss-ember-active); }
+  .btn-default { background: var(--ss-raised); color: var(--ss-text); border-color: var(--ss-border); }
+  .btn-default:hover { background: var(--ss-overlay); }
+  .btn-ghost { background: transparent; color: var(--ss-text); }
+  .btn-ghost:hover { background: var(--ss-raised); }
+  .btn-lg { padding: 14px 22px; font-size: 15px; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    background: var(--ss-surface); border: 1px solid var(--ss-border);
+    border-radius: var(--ss-radius-pill); padding: 3px 11px;
+    font-size: var(--ss-fs-caption); color: var(--ss-dim);
+  }
+
+  /* ---- top nav ---- */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--ss-surface) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--ss-border);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 11px; }
+  .brand svg { width: 26px; height: 28px; display: block; }
+  .brand .word { font-family: var(--ss-font-serif); font-weight: 700; font-size: 20px; letter-spacing: 0.01em; }
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-links a { padding: 8px 12px; border-radius: var(--ss-radius-sm); font-size: 14px; color: var(--ss-dim); transition: color var(--ss-motion-fast), background var(--ss-motion-fast); }
+  .nav-links a:hover { color: var(--ss-text); background: var(--ss-raised); }
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+  .theme-toggle {
+    width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer;
+    background: transparent; border: 1px solid var(--ss-border); border-radius: var(--ss-radius-sm); color: var(--ss-dim);
+    transition: color var(--ss-motion-fast), background var(--ss-motion-fast);
+  }
+  .theme-toggle:hover { color: var(--ss-text); background: var(--ss-raised); }
+  .theme-toggle:focus-visible { outline: none; box-shadow: var(--ss-focus-ring); }
+  @media (max-width: 860px) { .nav-links { display: none; } }
+
+  /* ---- hero ---- */
+  .hero { padding: 84px 0 72px; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+  @media (max-width: 940px) { .hero-grid { grid-template-columns: 1fr; gap: 44px; } .hero { padding: 56px 0 48px; } }
+  .hero h1 {
+    font-family: var(--ss-font-serif); font-weight: 700;
+    font-size: clamp(38px, 5.4vw, 60px); line-height: 1.08; letter-spacing: -0.01em;
+    margin: 18px 0 0;
+  }
+  .hero .lead { font-size: 17px; line-height: 1.6; color: var(--ss-dim); margin: 20px 0 0; max-width: 30em; }
+  .hero .lead b { color: var(--ss-text); font-weight: 600; }
+  .hero-cta { display: flex; align-items: center; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+  .hero-note { margin-top: 16px; font-size: var(--ss-fs-caption); color: var(--ss-dim); display: flex; align-items: center; gap: 8px; }
+
+  /* ---- product art (faithful app window) ---- */
+  .art {
+    background: var(--ss-surface); border: 1px solid var(--ss-border);
+    border-radius: var(--ss-radius-lg); box-shadow: var(--ss-shadow-lg);
+    overflow: hidden; position: relative;
+  }
+  .art-bar { display: flex; align-items: center; justify-content: space-between; height: 44px; padding: 0 14px; border-bottom: 1px solid var(--ss-border); background: var(--ss-surface); }
+  .art-bar .left { display: flex; align-items: center; gap: 10px; }
+  .art-bar .word { font-family: var(--ss-font-serif); font-weight: 700; font-size: 15px; }
+  .campaign { display: flex; align-items: center; gap: 7px; background: var(--ss-raised); border: 1px solid var(--ss-border); border-radius: var(--ss-radius-pill); padding: 3px 10px; font-size: 11.5px; color: var(--ss-dim); }
+  .campaign .dot { width: 5px; height: 5px; border-radius: 999px; background: var(--ss-warn); }
+  .art-advance { font-size: 11.5px; font-weight: 600; color: #1a1206; background: var(--ss-accent); border-radius: var(--ss-radius-sm); padding: 5px 11px; }
+  .art-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  .firstmove {
+    background: var(--ss-accent-wash); border-radius: var(--ss-radius-sm);
+    box-shadow: inset 3px 0 0 var(--ss-accent); padding: 12px 14px;
+  }
+  .firstmove .lbl { font-size: 10.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ss-accent-text); display: flex; align-items: center; gap: 6px; }
+  .firstmove .txt { font-family: var(--ss-font-serif); font-style: italic; font-size: 15px; line-height: 1.5; margin-top: 5px; }
+
+  .log-head { display: flex; align-items: center; justify-content: space-between; }
+  .log-head .t { font-size: 12.5px; font-weight: 600; color: var(--ss-text); white-space: nowrap; }
+  .daymark { font-family: var(--ss-font-serif); font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ss-dim); }
+  .beat { display: flex; gap: 9px; align-items: flex-start; }
+  .beat .sev { width: 7px; height: 7px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .beat .b-txt { font-size: 12.5px; line-height: 1.5; }
+  .beat .b-meta { font-size: 11px; color: var(--ss-dim); margin-top: 2px; }
+  .log-stack { display: flex; flex-direction: column; gap: 13px; }
+
+  /* ---- section frame ---- */
+  section { padding: 80px 0; border-top: 1px solid var(--ss-border); }
+  @media (max-width: 700px) { section { padding: 56px 0; } }
+  .sec-head { max-width: 40em; }
+  .sec-head h2 { font-family: var(--ss-font-serif); font-weight: 700; font-size: clamp(28px, 3.6vw, 38px); line-height: 1.14; margin: 12px 0 0; letter-spacing: -0.01em; }
+  .sec-head p { color: var(--ss-dim); font-size: 16px; line-height: 1.6; margin: 14px 0 0; }
+
+  /* ---- how it works ---- */
+  .steps { margin-top: 44px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: step; }
+  @media (max-width: 900px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .steps { grid-template-columns: 1fr; } }
+  .step {
+    background: var(--ss-surface); border: 1px solid var(--ss-border); border-radius: var(--ss-radius-md);
+    padding: 22px; position: relative;
+  }
+  .step .ic { width: 40px; height: 40px; border-radius: var(--ss-radius-sm); background: var(--ss-raised); border: 1px solid var(--ss-border); display: grid; place-items: center; color: var(--ss-accent-text); }
+  .step .n { counter-increment: step; font-family: var(--ss-font-mono); font-size: 11px; color: var(--ss-dim); position: absolute; top: 18px; right: 20px; }
+  .step .n::before { content: "0" counter(step); }
+  .step h3 { font-family: var(--ss-font-sans); font-size: 16px; font-weight: 600; margin: 16px 0 0; }
+  .step p { font-size: 13.5px; line-height: 1.55; color: var(--ss-dim); margin: 7px 0 0; }
+
+  /* ---- why / features ---- */
+  .features { margin-top: 44px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
+  .feature { background: var(--ss-surface); border: 1px solid var(--ss-border); border-radius: var(--ss-radius-md); padding: 24px; transition: border-color var(--ss-motion-fast), transform var(--ss-motion-fast); }
+  .feature:hover { border-color: var(--ss-border-strong); }
+  .feature .ic { color: var(--ss-accent-text); }
+  .feature h3 { font-size: 16px; font-weight: 600; margin: 16px 0 0; }
+  .feature p { font-size: 13.5px; line-height: 1.55; color: var(--ss-dim); margin: 8px 0 0; }
+  .feature .glyph { font-size: 22px; line-height: 1; }
+
+  /* ---- download ---- */
+  #download { background: var(--ss-surface); }
+  .dl-grid { margin: 44px auto 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 760px; }
+  @media (max-width: 720px) { .dl-grid { grid-template-columns: 1fr; max-width: 460px; } }
+  .dl {
+    background: var(--ss-raised); border: 1px solid var(--ss-border); border-radius: var(--ss-radius-md);
+    box-shadow: var(--ss-shadow-md); padding: 26px; display: flex; flex-direction: column; gap: 4px;
+    position: relative;
+  }
+  .dl.detected { border-color: var(--ss-accent); box-shadow: var(--ss-shadow-md), inset 0 0 0 1px var(--ss-accent); }
+  .dl .os-badge { position: absolute; top: 18px; right: 18px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ss-accent-text); background: var(--ss-accent-wash); border-radius: var(--ss-radius-pill); padding: 3px 9px; opacity: 0; }
+  .dl.detected .os-badge { opacity: 1; }
+  .dl .platform-ic { width: 34px; height: 34px; color: var(--ss-text); }
+  .dl h3 { font-family: var(--ss-font-serif); font-size: 21px; font-weight: 700; margin: 14px 0 0; }
+  .dl .req { font-size: 12.5px; color: var(--ss-dim); margin: 4px 0 0; }
+  .dl .meta { display: flex; gap: 7px; flex-wrap: wrap; margin: 16px 0 18px; }
+  .dl .btn { margin-top: auto; justify-content: center; }
+  .dl .alt { margin-top: 10px; text-align: center; font-size: 12px; color: var(--ss-dim); }
+  .dl .alt a { color: var(--ss-link); }
+  .dl .alt a:hover { text-decoration: underline; }
+  .dl-foot { margin-top: 28px; font-size: 13px; color: var(--ss-dim); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .dl-foot a { color: var(--ss-link); }
+
+  /* ---- news / release notes ---- */
+  .news { margin-top: 44px; display: grid; grid-template-columns: 1fr; gap: 0; }
+  .release { display: grid; grid-template-columns: 200px 1fr; gap: 28px; padding: 28px 0; border-top: 1px solid var(--ss-border); }
+  .release:first-child { border-top: none; }
+  @media (max-width: 720px) { .release { grid-template-columns: 1fr; gap: 12px; } }
+  .release .rmeta { display: flex; flex-direction: column; gap: 8px; }
+  .release .ver { font-family: var(--ss-font-mono); font-size: 13px; color: var(--ss-text); display: inline-flex; align-items: center; gap: 9px; }
+  .release .ver .tag { font-family: var(--ss-font-sans); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ss-accent-text); background: var(--ss-accent-wash); border-radius: var(--ss-radius-pill); padding: 2px 8px; }
+  .release .date { font-size: 12.5px; color: var(--ss-dim); }
+  .release .rname { font-family: var(--ss-font-serif); font-size: 19px; font-weight: 700; margin: 0 0 12px; }
+  .release ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .release li { display: flex; gap: 11px; font-size: 14px; line-height: 1.5; color: var(--ss-dim); }
+  .release li b { color: var(--ss-text); font-weight: 600; }
+  .rtag { flex-shrink: 0; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border-radius: var(--ss-radius-pill); padding: 2px 8px; height: fit-content; margin-top: 2px; border: 1px solid var(--ss-border); }
+  .rtag.new { color: var(--ss-good); background: var(--ss-good-wash); border-color: transparent; }
+  .rtag.fix { color: var(--ss-info); background: var(--ss-info-wash); border-color: transparent; }
+  .rtag.imp { color: var(--ss-warn); background: var(--ss-warn-wash); border-color: transparent; }
+  .news-foot { margin-top: 34px; }
+
+  /* ---- closing CTA ---- */
+  .closing { text-align: center; }
+  .closing h2 { font-family: var(--ss-font-serif); font-weight: 700; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; margin: 0 auto; max-width: 16em; letter-spacing: -0.01em; }
+  .closing p { color: var(--ss-dim); font-size: 16px; margin: 18px auto 30px; max-width: 34em; line-height: 1.6; }
+  .closing .hero-cta { justify-content: center; }
+
+  /* ---- footer ---- */
+  footer.foot { border-top: 1px solid var(--ss-border); background: var(--ss-surface); padding: 40px 0; }
+  .foot-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .foot .brand .word { font-size: 17px; }
+  .foot-links { display: flex; gap: 20px; font-size: 13px; color: var(--ss-dim); }
+  .foot-links a:hover { color: var(--ss-text); }
+  .foot .copy { font-size: 12.5px; color: var(--ss-dim); width: 100%; margin-top: 8px; }
+
+  /* ---- (entrance animation intentionally omitted — content is always visible) ---- */
+</style>
+</head>
+<body>
+
+<!-- icon sprite (the app's own 1.8px line-icon set) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-open" viewBox="0 0 24 24"><path d="M18 8a3 3 0 0 1 0 6"/><path d="M10 8v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-5"/><path d="M12 8l4.5-3.8a.9.9 0 0 1 1.5.7v12.2a.9.9 0 0 1-1.5.7L12 14H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h8"/></symbol>
+  <symbol id="i-drives" viewBox="0 0 24 24"><path d="M12 12c2-3 0-7-1-8 0 3-1.8 4.7-3 6-1.2 1.3-2 3.2-2 5a6 6 0 1 0 12 0c0-1.5-1.1-3.9-2-5-1.8 3-2.8 3-4 2z"/></symbol>
+  <symbol id="i-firstmove" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><path d="M12 8v4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></symbol>
+  <symbol id="i-sense" viewBox="0 0 24 24"><path d="M9 5a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+  <symbol id="i-reactions" viewBox="0 0 24 24"><path d="M21 17h-8l-3.5-5H3"/><path d="M21 7h-8l-3.5 5"/><path d="M18 10l3-3-3-3"/><path d="M18 20l3-3-3-3"/></symbol>
+  <symbol id="i-projected" viewBox="0 0 24 24"><path d="M6.5 7h11"/><path d="M6.5 17h11"/><path d="M8 3h8"/><path d="M8 21h8"/><path d="M6 4v2a6 6 0 1 0 12 0V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/></symbol>
+  <symbol id="i-hidden" viewBox="0 0 24 24"><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M16.7 16.7A8.7 8.7 0 0 1 12 18c-3.6 0-6.6-2-9-6 1.3-2.1 2.7-3.7 4.3-4.7m2.9-1.1A9 9 0 0 1 12 6c3.6 0 6.6 2 9 6-.7 1.1-1.4 2.1-2.1 2.9"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-levers" viewBox="0 0 24 24"><path d="M14 6h6"/><path d="M4 6h6m0-2v4"/><path d="M16 12h4"/><path d="M4 12h8m0-2v4"/><path d="M10 18h10"/><path d="M4 18h2m0-2v4"/></symbol>
+</svg>
+
+<!-- the Chamberstick mark, reused throughout -->
+<template id="mark">
+  <svg viewBox="0 0 60 64" fill="none" aria-hidden="true">
+    <path d="M26 6 C31 13 32 18 26 23 C20 18 21 13 26 6 Z" fill="var(--ss-accent)"/>
+    <path d="M26 11 C28.6 14.5 29 17.5 26 20.5 C23 17.5 23.4 14.5 26 11 Z" fill="var(--ss-accent-wash)"/>
+    <path d="M26 23 L26 27" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M20 30 Q20 28 26 28 Q32 28 32 30 L32 44 L20 44 Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M13 46 Q13 44 16 44 L36 44 Q39 44 39 46 Q39 51 32 51 L20 51 Q13 51 13 46 Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M39 47 Q49 46 49 51.5 Q49 57 41 56" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  </svg>
+</template>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="SootScribe home">
+      <span class="mark-slot"></span>
+      <span class="word">Soot<span class="ember">Scribe</span></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#why">Why SootScribe</a>
+      <a href="#download">Download</a>
+      <a href="#news">News</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeBtn" aria-label="Switch theme" title="Switch Ink / Vellum">
+        <svg class="icon" id="themeIcon" viewBox="0 0 24 24" style="width:18px;height:18px"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg>
+      </button>
+      <a class="btn btn-filled" href="#download">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" style="border-top:none">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <span class="kicker">A side project for tabletop GMs</span>
+      <h1 style="background-image: linear-gradient(118deg, var(--ss-text) 38%, var(--ss-accent-text) 108%); -webkit-background-clip: text; background-clip: text; color: transparent;">Your world keeps<br>moving between<br>sessions.</h1>
+      <p class="lead">SootScribe keeps your world moving while the party's away — factions scheming, debts coming due — without you tracking all of it by hand. You sketch the people and places in your world; it <b>advances a day at a time</b> and tells you what they got up to.</p>
+      <div class="hero-cta">
+        <a class="btn btn-filled btn-lg" href="#download">
+          <svg class="icon" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Download
+        </a>
+        <a class="btn btn-default btn-lg" href="#how">See how it works</a>
+      </div>
+      <div class="hero-note">
+        <svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px;color:var(--ss-good)"><path d="M20 6L9 17l-5-5"/></svg>
+        Free, runs entirely on your machine · macOS &amp; Windows · no sign-up, no telemetry
+      </div>
+    </div>
+
+    <!-- product art -->
+    <div class="reveal art" aria-label="SootScribe app preview">
+      <div class="art-bar">
+        <div class="left">
+          <span class="mark-slot" style="width:20px;height:21px;display:block"></span>
+          <span class="word">Soot<span class="ember">Scribe</span></span>
+          <span class="campaign">The Reach of Greywater · Day 14 <span class="dot"></span></span>
+        </div>
+        <span class="art-advance">Advance ▸</span>
+      </div>
+      <div class="art-body">
+        <div>
+          <div class="firstmove">
+            <div class="lbl"><svg class="icon" style="width:13px;height:13px"><use href="#i-firstmove"/></svg> First move · The Ashfingers</div>
+            <div class="txt">"A polite collector arrives at the chandler's with an invoice, two quiet friends, and all the time in the world."</div>
+          </div>
+        </div>
+        <div class="log-head">
+          <span class="t">Story log</span>
+          <span class="chip">Day 14</span>
+        </div>
+        <div class="log-stack">
+          <div>
+            <div class="daymark" style="margin-bottom:11px">Day 14</div>
+            <div class="log-stack">
+              <div class="beat">
+                <span class="sev" style="background:var(--ss-danger)"></span>
+                <div><div class="b-txt">The Ashfingers chalk a fourth debt-mark across the chandlers' row.</div><div class="b-meta">The Ashfingers → Greywater docks · scheme</div></div>
+              </div>
+              <div class="beat">
+                <span class="sev" style="background:var(--ss-warn)"></span>
+                <div><div class="b-txt">Captain Holt quietly pulls the old tannery-fire report from the archive.</div><div class="b-meta">Captain Holt · grudge</div></div>
+              </div>
+              <div class="beat">
+                <span class="sev" style="background:var(--ss-dim)"></span>
+                <div><div class="b-txt">Mira the Fence turns down an honest buyer, holding out for a bigger stake.</div><div class="b-meta">Mira the Fence · debt</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">How it works</span>
+      <h2>It's one loop, really.</h2>
+      <p>You build your world once. After that, every session is the same rhythm — advance the clock, read what the world did, bring it to the table.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-drives"/></svg></div><h3>Author your world</h3><p>Sketch settlements, factions and people. Give each one a goal, a fear, and a line it won't cross.</p></div>
+      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-firstmove"/></svg></div><h3>Advance the day</h3><p>One tap moves time forward a day or a week. Every entity acts on its drives, against the others.</p></div>
+      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-log"/></svg></div><h3>Read the chronicle</h3><p>The world reports what happened and <em>why</em>, grouped by day, traceable back to the root cause.</p></div>
+      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-sense"/></svg></div><h3>Run it at the table</h3><p>First moves, secrets and levers are laid out per entity. Bring prep that already happened.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHY ===================== -->
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">Why it works this way</span>
+      <h2>A real simulation underneath.</h2>
+      <p>It's not a random generator and it's not a chatbot. It's a deterministic simulation — the same inputs always produce the same world — so it's something you can actually plan around. Here's what that gets you.</p>
+    </div>
+    <div class="features">
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-projected"/></svg></div><h3>Deterministic, not random</h3><p>Same seed, same world. Re-run a week or branch a decision and you get the same result — nothing changes unless you change it.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-drives"/></svg></div><h3>Entities with their own goals</h3><p>Wants, Fears, Won't. Factions scheme and people act without you holding every string.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-log"/></svg></div><h3>The chronicle remembers</h3><p>Every beat keeps its cause. Follow any event back through the chain that made it happen.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-hidden"/></svg></div><h3>Local-first &amp; offline</h3><p>Your worlds live on your machine as plain files. No account, no cloud, no telemetry.</p></div>
+      <div class="feature reveal"><div class="ic glyph ember">✨</div><h3>AI is optional flavour</h3><p>Plain deterministic text by default. Turn on prose for colour — it never changes what happened.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-open"/></svg></div><h3>Two themes, one desk</h3><p>Ink by lamplight or Vellum by day. The whole workspace reskins with a single switch.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DOWNLOAD ===================== -->
+<section id="download">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">Download</span>
+      <h2>Grab it.</h2>
+      <p>Free, same app on both platforms. Current build <span class="serif ember" style="font-style:italic">v1.4.0 — "The Forecast"</span>.</p>
+    </div>
+    <div class="dl-grid">
+      <div class="dl" data-os="mac">
+        <span class="os-badge">Your system</span>
+        <svg class="platform-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.2 1.8-3.3 1.9-3.3-1-1.5-2.6-1.7-3.2-1.7-1.3-.1-2.6.8-3.3.8-.7 0-1.7-.8-2.8-.8-1.4 0-2.8.8-3.5 2.1-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.5 2.2 2.6 2.1 1-.04 1.4-.7 2.7-.7 1.2 0 1.6.7 2.7.6 1.1-.02 1.8-1 2.5-2 .8-1.2 1.1-2.3 1.1-2.3-.02-.01-2.1-.8-2.1-3.2zM14.3 6.2c.6-.7 1-1.7.9-2.7-.9.04-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .07 1.9-.5 2.5-1.2z"/></svg>
+        <h3>macOS</h3>
+        <p class="req">Apple Silicon &amp; Intel · macOS 12 Monterey or later</p>
+        <div class="meta"><span class="chip">.dmg · 94 MB</span><span class="chip">Universal</span></div>
+        <a class="btn btn-filled" href="#" data-dl="mac">Download for Mac</a>
+        <div class="alt">Also: <a href="#" data-dl="mac-zip">.zip</a> · <a href="#" data-dl="brew">Homebrew</a></div>
+      </div>
+
+      <div class="dl" data-os="win">
+        <span class="os-badge">Your system</span>
+        <svg class="platform-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.6l7.3-1v6.9H3zM3 18.4l7.3 1v-6.8H3zM11.2 4.4L21 3v8.5h-9.8zM11.2 12.6H21V21l-9.8-1.4z"/></svg>
+        <h3>Windows</h3>
+        <p class="req">64-bit · Windows 10 or later</p>
+        <div class="meta"><span class="chip">.exe · 88 MB</span><span class="chip">Installer</span></div>
+        <a class="btn btn-filled" href="#" data-dl="win">Download for Windows</a>
+        <div class="alt">Also: <a href="#" data-dl="win-portable">portable .zip</a> · <a href="#" data-dl="winget">winget</a></div>
+      </div>
+    </div>
+    <div class="dl-foot reveal">
+      <svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#i-hidden"/></svg>
+      Open beta · free · MIT-licensed core. New builds land every few weeks — see the <a href="#news">release notes</a> or the <a href="#">install notes</a>.
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NEWS / RELEASE NOTES ===================== -->
+<section id="news">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">News &amp; release notes</span>
+      <h2>What's new.</h2>
+      <p>Small updates land regularly. Most of what's here started as something missing at the table.</p>
+    </div>
+    <div class="news">
+      <article class="release reveal">
+        <div class="rmeta">
+          <span class="ver">v1.4.0 <span class="tag">Latest</span></span>
+          <span class="date">June 12, 2026</span>
+        </div>
+        <div>
+          <h3 class="rname">The Forecast</h3>
+          <ul>
+            <li><span class="rtag new">New</span><span><b>Forecast view.</b> Run the simulation forward speculatively, then tick the turns you want to keep and commit — the rest are discarded.</span></li>
+            <li><span class="rtag new">New</span><span><b>"Will surface" panel</b> guesses which secrets are about to break, and roughly when.</span></li>
+            <li><span class="rtag imp">Improved</span><span>The story log now traces every beat back to its cause with a single <em>why</em> toggle.</span></li>
+            <li><span class="rtag fix">Fixed</span><span>Advancing a week no longer double-counts debts that came due mid-step. (This one annoyed me for months.)</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="release reveal">
+        <div class="rmeta">
+          <span class="ver">v1.3.0</span>
+          <span class="date">April 28, 2026</span>
+        </div>
+        <div>
+          <h3 class="rname">Sessions &amp; scene notes</h3>
+          <ul>
+            <li><span class="rtag new">New</span><span><b>Sessions screen.</b> Drop quick scene notes during play, then promote any note into world-changing GM feedback when you advance time.</span></li>
+            <li><span class="rtag new">New</span><span>Entities can now carry an <b>uploaded portrait</b> — framed to match the initials avatar, with a graceful fallback.</span></li>
+            <li><span class="rtag imp">Improved</span><span>Vellum theme contrast tuned for daylight reading.</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="release reveal">
+        <div class="rmeta">
+          <span class="ver">v1.2.0</span>
+          <span class="date">March 9, 2026</span>
+        </div>
+        <div>
+          <h3 class="rname">The Party ledger</h3>
+          <ul>
+            <li><span class="rtag new">New</span><span><b>Party view.</b> Track where the PCs stand with every faction, plus a running ledger of who owes whom.</span></li>
+            <li><span class="rtag imp">Improved</span><span>Roster filtering is now instant across worlds with hundreds of entities.</span></li>
+            <li><span class="rtag fix">Fixed</span><span>Undo now restores secret reveal-state correctly across an advance.</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CLOSING ===================== -->
+<section class="closing">
+  <div class="wrap reveal">
+    <h2>That's the whole thing.</h2>
+    <p>SootScribe started as a tool for one table. If it's useful at yours, even better. It's free, runs entirely offline, and there's nothing to sign up for.</p>
+    <div class="hero-cta">
+      <a class="btn btn-filled btn-lg" href="#download">Download</a>
+      <a class="btn btn-ghost btn-lg" href="#news">What's new</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <a class="brand" href="#top">
+      <span class="mark-slot" style="width:22px;height:24px;display:block"></span>
+      <span class="word">Soot<span class="ember">Scribe</span></span>
+    </a>
+    <nav class="foot-links">
+      <a href="#how">How it works</a>
+      <a href="#why">Why SootScribe</a>
+      <a href="#download">Download</a>
+      <a href="#news">News</a>
+    </nav>
+    <div class="copy">A deterministic living-world simulator for tabletop GMs. Free, offline, and yours to keep. © 2026.</div>
+  </div>
+</footer>
+
+<script>
+  // Place the Chamberstick mark into every slot
+  (function () {
+    var tpl = document.getElementById('mark');
+    document.querySelectorAll('.mark-slot').forEach(function (slot) {
+      var svg = tpl.content.firstElementChild.cloneNode(true);
+      slot.appendChild(svg);
+    });
+  })();
+
+  // Theme toggle (Ink <-> Vellum), persisted
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeBtn');
+    var icon = document.getElementById('themeIcon');
+    var sun = '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';
+    var moon = '<path d="M20 13.5A8 8 0 1 1 10.5 4 6.2 6.2 0 0 0 20 13.5z"/>';
+    function apply(t) {
+      root.classList.add('no-transition');
+      root.setAttribute('data-theme', t);
+      icon.innerHTML = t === 'vellum' ? moon : sun;
+      try { localStorage.setItem('ss-site-theme', t); } catch (e) {}
+      setTimeout(function () { root.classList.remove('no-transition'); }, 60);
+    }
+    var saved;
+    try { saved = localStorage.getItem('ss-site-theme'); } catch (e) {}
+    apply(saved || 'ink');
+    btn.addEventListener('click', function () {
+      apply(root.getAttribute('data-theme') === 'vellum' ? 'ink' : 'vellum');
+    });
+  })();
+
+  // Detect OS to highlight the matching download card
+  (function () {
+    var ua = (navigator.userAgent || '') + ' ' + (navigator.platform || '');
+    var os = null;
+    if (/Mac|iPhone|iPad|iPod/i.test(ua)) os = 'mac';
+    else if (/Win/i.test(ua)) os = 'win';
+    if (os) {
+      var card = document.querySelector('.dl[data-os="' + os + '"]');
+      if (card) card.classList.add('detected');
+    }
+  })();
+
+  // Download buttons are placeholders in this preview
+  document.querySelectorAll('[data-dl]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+    });
+  });
+</script>
+
+</body>
+</html>

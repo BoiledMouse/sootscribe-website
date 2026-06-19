@@ -1,0 +1,38 @@
+/*
+ * Typography — two families, one scale.
+ *
+ * Serif = the in-world VOICE (read-aloud, names, quotes); always serif, italic
+ * when spoken. Sans = all UI chrome. Mono = ids, seeds, raw values.
+ */
+
+:root {
+  /* ---- Families ---- */
+  --ss-font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  --ss-font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+  --ss-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ---- Type scale ---- */
+  --ss-fs-label: 11px;     /* UPPERCASE micro-label, 0.07em, dim */
+  --ss-fs-caption: 12.5px; /* helper text, chips */
+  --ss-fs-body: 14px;      /* default UI text */
+  --ss-fs-voice: 15.5px;   /* serif, italic in-world speech */
+  --ss-fs-title: 20px;     /* panel / section titles (600) */
+  --ss-fs-name: 26px;      /* entity name / card heading (700, serif) */
+  --ss-fs-display: 34px;   /* hero, empty states (serif) */
+
+  /* ---- Line heights ---- */
+  --ss-lh-tight: 1.2; /* @kind other */
+  --ss-lh-snug: 1.35; /* @kind other */
+  --ss-lh-normal: 1.5; /* @kind other */
+  --ss-lh-relaxed: 1.6; /* @kind other */
+
+  /* ---- Weights ---- */
+  --ss-fw-regular: 400; /* @kind other */
+  --ss-fw-medium: 500; /* @kind other */
+  --ss-fw-semibold: 600; /* @kind other */
+  --ss-fw-bold: 700; /* @kind other */
+
+  /* ---- Letter spacing ---- */
+  --ss-ls-label: 0.07em; /* @kind other */
+  --ss-ls-normal: 0; /* @kind other */
+}
