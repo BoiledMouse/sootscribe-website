@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SootScribe — a living world that writes itself</title>
-<meta name="description" content="SootScribe is a deterministic living-world simulator for tabletop game masters. Author settlements, factions and people, advance time a day at a time, and read the believable story the world tells." />
+<title>SootScribe: a living world for your table</title>
+<meta name="description" content="SootScribe is a desktop tool for DMs. Add the people, places and factions in your world, move time forward between sessions, and keep track of it all without the admin pile-up. @mention entities, roll dice, and see how everything connects." />
 <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg" />
 <link rel="stylesheet" href="styles.css" />
 <style>
@@ -222,7 +222,7 @@
   .foot-links a:hover { color: var(--ss-text); }
   .foot .copy { font-size: 12.5px; color: var(--ss-dim); width: 100%; margin-top: 8px; }
 
-  /* ---- (entrance animation intentionally omitted — content is always visible) ---- */
+  /* ---- (entrance animation intentionally omitted; content is always visible) ---- */
 </style>
 </head>
 <body>
@@ -280,9 +280,9 @@
 <section class="hero" style="border-top:none">
   <div class="wrap hero-grid">
     <div class="reveal">
-      <span class="kicker">A side project for tabletop GMs</span>
+      <span class="kicker">A tool I built for my own table</span>
       <h1 style="background-image: linear-gradient(118deg, var(--ss-text) 38%, var(--ss-accent-text) 108%); -webkit-background-clip: text; background-clip: text; color: transparent;">Your world keeps<br>moving between<br>sessions.</h1>
-      <p class="lead">SootScribe keeps your world moving while the party's away — factions scheming, debts coming due — without you tracking all of it by hand. You sketch the people and places in your world; it <b>advances a day at a time</b> and tells you what they got up to.</p>
+      <p class="lead">I built SootScribe because my world went quiet the moment the party left town. You add the people, places and factions you care about, give them something to want and something to fear, then <b>move time forward</b>. It tells you what they got up to while you were busy running the game.</p>
       <div class="hero-cta">
         <a class="btn btn-filled btn-lg" href="#download">
           <svg class="icon" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
@@ -347,13 +347,13 @@
     <div class="sec-head reveal">
       <span class="kicker">How it works</span>
       <h2>It's one loop, really.</h2>
-      <p>You build your world once. After that, every session is the same rhythm — advance the clock, read what the world did, bring it to the table.</p>
+      <p>You set your world up once. After that it's the same rhythm every week. Move time forward, read what the world did, bring it to the table.</p>
     </div>
     <div class="steps">
-      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-drives"/></svg></div><h3>Author your world</h3><p>Sketch settlements, factions and people. Give each one a goal, a fear, and a line it won't cross.</p></div>
-      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-firstmove"/></svg></div><h3>Advance the day</h3><p>One tap moves time forward a day or a week. Every entity acts on its drives, against the others.</p></div>
-      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-log"/></svg></div><h3>Read the chronicle</h3><p>The world reports what happened and <em>why</em>, grouped by day, traceable back to the root cause.</p></div>
-      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-sense"/></svg></div><h3>Run it at the table</h3><p>First moves, secrets and levers are laid out per entity. Bring prep that already happened.</p></div>
+      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-drives"/></svg></div><h3>Add your world</h3><p>Drop in the settlements, factions and people you care about. Give each one something it wants and something it's scared of. Adding more later takes seconds.</p></div>
+      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-firstmove"/></svg></div><h3>Move time forward</h3><p>One tap pushes the clock ahead a day or a week. Everything you added acts on what it wants and bumps into everything else.</p></div>
+      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-log"/></svg></div><h3>Read what happened</h3><p>You get a log of what everyone did and <em>why</em>, sorted by day. Follow any event back to the thing that set it off.</p></div>
+      <div class="step reveal"><span class="n"></span><div class="ic"><svg class="icon"><use href="#i-sense"/></svg></div><h3>Run your session</h3><p>@mention anyone to pull them up, roll dice right there, and jot what the party does. Your notes feed back into the world next time.</p></div>
     </div>
   </div>
 </section>
@@ -362,17 +362,17 @@
 <section id="why">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="kicker">Why it works this way</span>
+      <span class="kicker">Why I built it this way</span>
       <h2>A real simulation underneath.</h2>
-      <p>It's not a random generator and it's not a chatbot. It's a deterministic simulation — the same inputs always produce the same world — so it's something you can actually plan around. Here's what that gets you.</p>
+      <p>It isn't a random table and it isn't a chatbot making things up. The world runs on rules, so the same setup gives you the same result every time. That means you can trust your prep. Here's what that buys you.</p>
     </div>
     <div class="features">
-      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-projected"/></svg></div><h3>Deterministic, not random</h3><p>Same seed, same world. Re-run a week or branch a decision and you get the same result — nothing changes unless you change it.</p></div>
-      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-drives"/></svg></div><h3>Entities with their own goals</h3><p>Wants, Fears, Won't. Factions scheme and people act without you holding every string.</p></div>
-      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-log"/></svg></div><h3>The chronicle remembers</h3><p>Every beat keeps its cause. Follow any event back through the chain that made it happen.</p></div>
-      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-hidden"/></svg></div><h3>Local-first &amp; offline</h3><p>Your worlds live on your machine as plain files. No account, no cloud, no telemetry.</p></div>
-      <div class="feature reveal"><div class="ic glyph ember">✨</div><h3>AI is optional flavour</h3><p>Plain deterministic text by default. Turn on prose for colour — it never changes what happened.</p></div>
-      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-open"/></svg></div><h3>Two themes, one desk</h3><p>Ink by lamplight or Vellum by day. The whole workspace reskins with a single switch.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-open"/></svg></div><h3>Add things in seconds</h3><p>An NPC you didn't plan for? Add them on the spot and they're part of the world from then on. Keeping track of them is the tool's job, not yours.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-sense"/></svg></div><h3>@mention anything</h3><p>Type @ to pull up any person, place or faction without leaving what you're doing. Reference them in your notes or jump straight to their page.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-reactions"/></svg></div><h3>See how it all connects</h3><p>Who owes whom, who's feuding, who answers to who. The relationships are laid out so you can follow the threads instead of holding them in your head.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-projected"/></svg></div><h3>Roll dice right there</h3><p>Roll inside SootScribe, inline with whatever you're looking at. No reaching for a separate roller or a handful of physical dice mid-scene.</p></div>
+      <div class="feature reveal"><div class="ic glyph ember">✨</div><h3>AI only if you want it</h3><p>Plain readable text by default. Plug in a local or remote model for richer prose if you feel like it, and switch it off whenever. It never changes what actually happened.</p></div>
+      <div class="feature reveal"><div class="ic"><svg class="icon"><use href="#i-hidden"/></svg></div><h3>Lives on your machine</h3><p>Your worlds are plain files on your own disk. No account, no cloud, nothing phoning home. It works on a plane.</p></div>
     </div>
   </div>
 </section>
@@ -383,7 +383,7 @@
     <div class="sec-head reveal">
       <span class="kicker">Download</span>
       <h2>Grab it.</h2>
-      <p>Free, same app on both platforms. Current build <span class="serif ember" style="font-style:italic">v1.4.0 — "The Forecast"</span>.</p>
+      <p>Free, and it's the same app on Mac and Windows. Current build is <span class="serif ember" style="font-style:italic">v1.4.0, "The Forecast"</span>.</p>
     </div>
     <div class="dl-grid">
       <div class="dl" data-os="mac">
@@ -408,7 +408,7 @@
     </div>
     <div class="dl-foot reveal">
       <svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#i-hidden"/></svg>
-      Open beta · free · MIT-licensed core. New builds land every few weeks — see the <a href="#news">release notes</a> or the <a href="#">install notes</a>.
+      Open beta, free, MIT-licensed core. New builds land every few weeks. See the <a href="#news">release notes</a> or the <a href="#">install notes</a>.
     </div>
   </div>
 </section>
@@ -419,7 +419,7 @@
     <div class="sec-head reveal">
       <span class="kicker">News &amp; release notes</span>
       <h2>What's new.</h2>
-      <p>Small updates land regularly. Most of what's here started as something missing at the table.</p>
+      <p>Small updates land pretty often. Most of it started as something I wished I had mid-session.</p>
     </div>
     <div class="news">
       <article class="release reveal">
@@ -430,7 +430,7 @@
         <div>
           <h3 class="rname">The Forecast</h3>
           <ul>
-            <li><span class="rtag new">New</span><span><b>Forecast view.</b> Run the simulation forward speculatively, then tick the turns you want to keep and commit — the rest are discarded.</span></li>
+            <li><span class="rtag new">New</span><span><b>Forecast view.</b> Run the simulation forward speculatively, then tick the turns you want to keep and commit. The rest get thrown away.</span></li>
             <li><span class="rtag new">New</span><span><b>"Will surface" panel</b> guesses which secrets are about to break, and roughly when.</span></li>
             <li><span class="rtag imp">Improved</span><span>The story log now traces every beat back to its cause with a single <em>why</em> toggle.</span></li>
             <li><span class="rtag fix">Fixed</span><span>Advancing a week no longer double-counts debts that came due mid-step. (This one annoyed me for months.)</span></li>
@@ -447,7 +447,7 @@
           <h3 class="rname">Sessions &amp; scene notes</h3>
           <ul>
             <li><span class="rtag new">New</span><span><b>Sessions screen.</b> Drop quick scene notes during play, then promote any note into world-changing GM feedback when you advance time.</span></li>
-            <li><span class="rtag new">New</span><span>Entities can now carry an <b>uploaded portrait</b> — framed to match the initials avatar, with a graceful fallback.</span></li>
+            <li><span class="rtag new">New</span><span>Entities can now carry an <b>uploaded portrait</b>, framed to match the initials avatar, with a fallback for when there isn't one.</span></li>
             <li><span class="rtag imp">Improved</span><span>Vellum theme contrast tuned for daylight reading.</span></li>
           </ul>
         </div>
@@ -475,7 +475,7 @@
 <section class="closing">
   <div class="wrap reveal">
     <h2>That's the whole thing.</h2>
-    <p>SootScribe started as a tool for one table. If it's useful at yours, even better. It's free, runs entirely offline, and there's nothing to sign up for.</p>
+    <p>SootScribe started as a tool for my table. If it makes yours easier too, great. It's free, runs fully offline, and there's nothing to sign up for.</p>
     <div class="hero-cta">
       <a class="btn btn-filled btn-lg" href="#download">Download</a>
       <a class="btn btn-ghost btn-lg" href="#news">What's new</a>
@@ -498,7 +498,7 @@
       <a href="#download">Download</a>
       <a href="#news">News</a>
     </nav>
-    <div class="copy">A deterministic living-world simulator for tabletop GMs. Free, offline, and yours to keep. © 2026.</div>
+    <div class="copy">A living-world tool for tabletop GMs. Free, offline, and yours to keep. © 2026.</div>
   </div>
 </footer>
 
